@@ -20,7 +20,7 @@ class MotionCapturerLeapMotion(MotionCapturer):
         hand = frame.hands[0]
         pitch = 1 - self.normalize(hand.direction.pitch)
         roll = 1 - self.normalize(hand.palm_normal.roll)
-        yaw = (self.normalize(hand.direction.yaw) - 0.5) * 0.1 + 0.5
+        yaw = filter_yaw(self.normalize(hand.direction.yaw))
         throttle = min(1, hand.palm_position[1] / 300)
         print(pitch, roll, yaw, throttle)
         return pitch, roll, yaw, throttle
@@ -28,3 +28,12 @@ class MotionCapturerLeapMotion(MotionCapturer):
 
     def normalize(self, radians):
         return (radians + math.pi) / (2 * math.pi)
+
+
+    def filter_yaw(self, value, threshold=0.1):
+        if abs(value - 0.5) < threshold:
+            # Ignoring the yaw
+            return 0
+        else:
+            # Scaling the yaw
+            return (value - 0.5) * 0.1 + 0.5
