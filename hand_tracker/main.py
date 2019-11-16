@@ -5,13 +5,18 @@ src_dir = os.path.dirname(inspect.getfile(inspect.currentframe()))
 lib_dir = os.path.abspath(os.path.join(src_dir, './lib'))
 sys.path.insert(0, lib_dir)
 
-from motion_capturer import MotionCapturer
+from motion_capturer_leap_motion import MotionCapturerLeapMotion
+from motion_capturer_mouse import MotionCapturerMouse
 from transmitter import Transmitter
 
 def main():
 
-    motion_capturer = MotionCapturer()
-    transmitter = Transmitter(sys.argv[1])
+    if sys.argv[1] == 'leap_motion':
+        motion_capturer = MotionCapturerLeapMotion()
+    elif sys.argv[1] == 'mouse':
+        motion_capturer = MotionCapturerMouse()
+
+    transmitter = Transmitter(sys.argv[2])
 
     while True:
         try:
