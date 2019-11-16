@@ -1,0 +1,54 @@
+#Generating source browse information for project FRSKYD8(2018-1-23)
+
+
+#Abbreviations
+cc = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.3\common\bin\SourceIndexer.exe
+ll = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.3\common\bin\PbdLink.exe
+bd = C$:\Program$ Files$ (x86)\IAR$ Systems\Embedded$ Workbench$ 8.3\common\bin\makeBrowseData.exe
+
+
+
+#Rules
+rule index
+  depfile = $out.dep
+  command = $cc -out=$out -f $in
+rule link
+  command = $ll -M $out $in
+rule browsedata
+  command = $bd $in -output  $out
+
+
+
+#Build steps
+build stm8l15x_adc.pbi : index stm8l15x_adc.xcl
+build stm8l15x_dma.pbi : index stm8l15x_dma.xcl
+build stm8l15x_flash.pbi : index stm8l15x_flash.xcl
+build stm8l15x_gpio.pbi : index stm8l15x_gpio.xcl
+build stm8l15x_usart.pbi : index stm8l15x_usart.xcl
+build FTDebug.pbi : index FTDebug.xcl
+build Menu.pbi : index Menu.xcl
+build PowerOn.pbi : index PowerOn.xcl
+build StartUp.pbi : index StartUp.xcl
+build CC2500.pbi : index CC2500.xcl
+build FRSKYD8.pbi : index FRSKYD8.xcl
+build adc.pbi : index adc.xcl
+build beep.pbi : index beep.xcl
+build boot.pbi : index boot.xcl
+build ee.pbi : index ee.xcl
+build key.pbi : index key.xcl
+build LED.pbi : index LED.xcl
+build main.pbi : index main.xcl
+build SPI2.pbi : index SPI2.xcl
+build stm8l15x_it.pbi : index stm8l15x_it.xcl
+build tbc.pbi : index tbc.xcl
+build U3.pbi : index U3.xcl
+build uniqueID.pbi : index uniqueID.xcl
+build FRSKYD8(2018-1-23)_part0.pbi : link stm8l15x_adc.pbi stm8l15x_dma.pbi stm8l15x_flash.pbi stm8l15x_gpio.pbi stm8l15x_usart.pbi
+build FRSKYD8(2018-1-23)_part1.pbi : link FTDebug.pbi Menu.pbi PowerOn.pbi StartUp.pbi CC2500.pbi
+build FRSKYD8(2018-1-23)_part2.pbi : link FRSKYD8.pbi adc.pbi beep.pbi boot.pbi ee.pbi
+build FRSKYD8(2018-1-23)_part3.pbi : link key.pbi LED.pbi main.pbi SPI2.pbi stm8l15x_it.pbi
+build FRSKYD8(2018-1-23)_part4.pbi : link tbc.pbi U3.pbi uniqueID.pbi
+build FRSKYD8(2018-1-23).pbd : link FRSKYD8(2018-1-23)_part0.pbi FRSKYD8(2018-1-23)_part1.pbi FRSKYD8(2018-1-23)_part2.pbi FRSKYD8(2018-1-23)_part3.pbi FRSKYD8(2018-1-23)_part4.pbi
+build FRSKYD8(2018-1-23).pbw : browsedata FRSKYD8(2018-1-23).pbd
+
+
