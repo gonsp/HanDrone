@@ -8,4 +8,14 @@ class MotionCapturer:
 
     def get_axis_values(self):
         frame = self.controller.frame()
-        if frame.hands
+        if len(frame.hands) == 0:
+            print("No hand detected")
+            return 0, 0, 0, 0
+        elif len(frame.hands) > 1:
+            print("More than one hand detected")
+            raise ValueError
+
+        hand = frame.hands[0]
+
+        print(hand.palm_position)
+

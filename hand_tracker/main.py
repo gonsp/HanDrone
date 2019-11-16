@@ -1,9 +1,12 @@
+#!/usr/bin/env python
+
 import os, sys, inspect
 src_dir = os.path.dirname(inspect.getfile(inspect.currentframe()))
 lib_dir = os.path.abspath(os.path.join(src_dir, './lib'))
 sys.path.insert(0, lib_dir)
 
 from motion_capturer import MotionCapturer
+from transmitter import Transmitter
 
 def main():
 
@@ -18,4 +21,5 @@ def main():
             print('Ignoring frame')
 
 
-
+if __name__ == '__main__':
+    main()
