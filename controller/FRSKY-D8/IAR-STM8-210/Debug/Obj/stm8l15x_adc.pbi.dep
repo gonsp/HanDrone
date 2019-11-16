@@ -1,15 +1,15 @@
 stm8l15x_adc.pbi: \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\src\stm8l15x_adc.c \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_adc.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc/stm8l15x.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\stm8l15x_conf.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_clk.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_dma.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_flash.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_gpio.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_spi.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_tim1.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_usart.h \
-  \\vmware-host\Shared\ Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc/stm8l15x_clk.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\src\stm8l15x_adc.c \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_adc.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc/stm8l15x.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\stm8l15x_conf.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_clk.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_dma.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_flash.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_gpio.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_spi.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_tim1.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc\stm8l15x_usart.h \
+  C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc/stm8l15x_clk.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\stm8\inc\c\intrinsics.h

@@ -1,8 +1,8 @@
 #include "include.h"
 
-#define OVERTIME_MAX 15 	//遥控器静止超过 15Min 报警
+#define OVERTIME_MAX 15 	// The remote control is still more than 15Min alarm
 
-//摇杆映射曲线
+// Rocker mapping curve
 const uint16_t OutputCode[420] = 
 {
 /*   	0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 0   , 
@@ -30,7 +30,7 @@ const uint16_t OutputCode[420] =
   
   
           //////////////////////////////////////////////////////////////////////////////////////////
-          ///////// 下面是11月18日新优化的曲线，缩小了曲率
+          ///////// Below is a new optimized curve for November 18, which reduces the curvature.
           //////////////////////////////////////////////////////////////////////////////////////////
           0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
@@ -56,11 +56,11 @@ const uint16_t OutputCode[420] =
 
 };
 
-uint8_t  ChannelInversion_flg = 0x00 ; 	//通道反向标志位(物理采样正常计算，发送时反向)
-//摇杆相关变量
-//最大 12 - CH                    RUD        /  THR   / ELE       /     ALL    /   Gear    /   Aux1    /   Aux2    /   Aux3    /   Aux4    /   Aux5    /   Aux6    /   Aux7  
+uint8_t  ChannelInversion_flg = 0x00 ; 	//Channel reverse flag (physical sampling is calculated normally, reverse when transmitting)
+//Rocker related variable
+//maximum 12 - CH                    RUD        /  THR   / ELE       /     ALL    /   Gear    /   Aux1    /   Aux2    /   Aux3    /   Aux4    /   Aux5    /   Aux6    /   Aux7  
 uint16_t Sampling_Data[12]  = {  Input_Mid  ,   0 ,  Input_Mid   , Input_Mid  , Input_Mid , Input_Mid , Input_Mid , Input_Mid , Input_Mid , Input_Mid , Input_Mid , Input_Mid};	
-//四摇杆相关变量(最大、最小、中位值)
+//Four joystick related variables (maximum, minimum, median)
 uint16_t Sampling_MaxMinData[4][3] = 
 {
 	{Input_Max , Input_Mid , Input_Min},
@@ -68,10 +68,10 @@ uint16_t Sampling_MaxMinData[4][3] =
 	{Input_Max , Input_Mid , Input_Min},
 	{Input_Max , Input_Mid , Input_Min},
 };
-uint8_t  Sampling_Offset[4] = {50   , 50   , 50   , 50};			//四摇杆偏置值(0-100)
+uint8_t  Sampling_Offset[4] = {50   , 50   , 50   , 50};			//Four rocker offset value (0-100)
  
 //==============================================================================
-//通过采样值，换算发送值
+//Convert the transmitted value by sampling the value
 //==============================================================================
 uint16_t Get_SendValue(ChannelTypeDef Channel)
 {
@@ -79,85 +79,102 @@ uint16_t Get_SendValue(ChannelTypeDef Channel)
 	uint16_t OutputTemp = 0 ; 
 	
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	//!!!!!!!!只有三个摇杆数据需要和中位值计算(除油门数据外)!!!!!!!!!!!!!!!!
-	//!!!!!!!!!!!!!!!!!!!千万注意，中位数组别越界!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//!!!!!!!!Only three joystick data needs to be calculated with the median value (except for throttle data) !!!!!!!!!!!!!!!!
+	//!!!!!!!!!!!!!!!!!!!Be careful, the median array does not cross the border!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	if((Channel == RUDDER) || (Channel == ELEVATOR) || (Channel == AILERON))
-	{	
-	  	//判断标定极值值范围，防止除数等于零的情况
-	  	if(Sampling_MaxMinData[Channel][MAXDAT] < MAXValue_Min)         Sampling_MaxMinData[Channel][MAXDAT] = MAXValue_Min ; 
-		if(Sampling_MaxMinData[Channel][MINDAT] > MINValue_Max)         Sampling_MaxMinData[Channel][MINDAT] = MINValue_Max ; 
-	  	if(Sampling_MaxMinData[Channel][MIDDAT] > AD_MidValue_Max)      Sampling_MaxMinData[Channel][MIDDAT] = AD_MidValue_Max ; 
-		else if(Sampling_MaxMinData[Channel][MIDDAT] < AD_MidValue_Min) Sampling_MaxMinData[Channel][MIDDAT] = AD_MidValue_Min ; 
+	if((Channel == RUDDER) || (Channel == ELEVATOR) || (Channel == AILERON)) {	
+	  	//Determine the range of calibration extreme values to prevent the divisor from being equal to zero
+	  	if(Sampling_MaxMinData[Channel][MAXDAT] < MAXValue_Min)
+		  	Sampling_MaxMinData[Channel][MAXDAT] = MAXValue_Min;
+
+		if(Sampling_MaxMinData[Channel][MINDAT] > MINValue_Max)
+			Sampling_MaxMinData[Channel][MINDAT] = MINValue_Max; 
+
+	  	if(Sampling_MaxMinData[Channel][MIDDAT] > AD_MidValue_Max)
+		  	Sampling_MaxMinData[Channel][MIDDAT] = AD_MidValue_Max; 
+		else if(Sampling_MaxMinData[Channel][MIDDAT] < AD_MidValue_Min)
+			Sampling_MaxMinData[Channel][MIDDAT] = AD_MidValue_Min; 
 		
-		//限定采样AD有效范围(标定最小值 - 标定最大值)
-		if(Sampling_Data[Channel] > Sampling_MaxMinData[Channel][MAXDAT])     ADTemp = Sampling_MaxMinData[Channel][MAXDAT] ; 
-		else if(Sampling_Data[Channel] < Sampling_MaxMinData[Channel][MINDAT])ADTemp = Sampling_MaxMinData[Channel][MINDAT] ; 
-		else								      ADTemp = Sampling_Data[Channel] ; 
+		// Limit sampling AD effective range (calibration minimum - calibration maximum)
+		if(Sampling_Data[Channel] > Sampling_MaxMinData[Channel][MAXDAT])
+			ADTemp = Sampling_MaxMinData[Channel][MAXDAT] ; 
+		else if(Sampling_Data[Channel] < Sampling_MaxMinData[Channel][MINDAT])
+			ADTemp = Sampling_MaxMinData[Channel][MINDAT] ; 
+		else
+			ADTemp = Sampling_Data[Channel] ; 
 		
-		//将三个摇杆输出数据做限幅处理(上下幅值各砍 100)
-	  	if(ADTemp >= Sampling_MaxMinData[Channel][MIDDAT]) { OutputTemp = Output_Mid + (uint16_t)((ADTemp - Sampling_MaxMinData[Channel][MIDDAT]) * (((float)(Output_Max - Output_Mid - 100))/(Sampling_MaxMinData[Channel][MAXDAT] - Sampling_MaxMinData[Channel][MIDDAT])) + 0.5f) ; }
-		else { OutputTemp = Output_Mid - (uint16_t)((Sampling_MaxMinData[Channel][MIDDAT] - ADTemp) * (((float)(Output_Mid - Output_Min - 100))/(Sampling_MaxMinData[Channel][MIDDAT] - Sampling_MaxMinData[Channel][MINDAT])) + 0.5f)  ; }
+		//The three rocker output data is used for limiting processing (the upper and lower amplitudes are cut 100 each)
+	  	if(ADTemp >= Sampling_MaxMinData[Channel][MIDDAT]) { 
+			OutputTemp = Output_Mid + (uint16_t)((ADTemp - Sampling_MaxMinData[Channel][MIDDAT]) * (((float)(Output_Max - Output_Mid - 100))/(Sampling_MaxMinData[Channel][MAXDAT] - Sampling_MaxMinData[Channel][MIDDAT])) + 0.5f) ; 
+		} else {
+			OutputTemp = Output_Mid - (uint16_t)((Sampling_MaxMinData[Channel][MIDDAT] - ADTemp) * (((float)(Output_Mid - Output_Min - 100))/(Sampling_MaxMinData[Channel][MIDDAT] - Sampling_MaxMinData[Channel][MINDAT])) + 0.5f)  ; 
+		}
 		
-		//查表换算前，检查数据范围防止越界(查表范围不能超过412)
-		if(OutputTemp > (Output_Max - 100)) OutputTemp = (Output_Max - 100) ; 
-		if(OutputTemp < (Output_Min + 100)) OutputTemp = (Output_Min + 100) ;
-		if(OutputTemp > Output_Mid) OutputTemp = OutputCode[OutputTemp - Output_Mid] + Output_Mid;
-		else		            OutputTemp = Output_Mid - OutputCode[Output_Mid - OutputTemp];
+		//Check the data range to prevent cross-border before the table is converted (the range of the table cannot exceed 412)
+		if(OutputTemp > (Output_Max - 100)) 
+			OutputTemp = (Output_Max - 100) ; 
+		if(OutputTemp < (Output_Min + 100)) 
+			OutputTemp = (Output_Min + 100) ;
 		
-		//计算偏置情况
-		if(Sampling_Offset[Channel] > 100)   Sampling_Offset[Channel] = 100 ;
+		if(OutputTemp > Output_Mid)
+			OutputTemp = OutputCode[OutputTemp - Output_Mid] + Output_Mid;
+		else
+			OutputTemp = Output_Mid - OutputCode[Output_Mid - OutputTemp];
+		
+		//Calculate the offset
+		if(Sampling_Offset[Channel] > 100)
+			Sampling_Offset[Channel] = 100 ;
+		
 		OutputTemp += Sampling_Offset[Channel] * 2 ; 
-		//防止数据减完小于 100 
-		if(OutputTemp > 200) OutputTemp -= 100 ;
-		else OutputTemp = 100 ; 
+		//Prevent data from being reduced less than 100 
+		if(OutputTemp > 200) 
+			OutputTemp -= 100 ;
+		else 
+			OutputTemp = 100 ; 
 		
-		//再次检查发射数据范围
-		if(OutputTemp > (Output_Max - 100)) OutputTemp = (Output_Max - 100); 
-		if(OutputTemp < (Output_Min + 100)) OutputTemp = (Output_Min + 100) ;
+		//Check the scope of the transmitted data again
+		if(OutputTemp > (Output_Max - 100)) 
+			OutputTemp = (Output_Max - 100); 
+		if(OutputTemp < (Output_Min + 100))
+			OutputTemp = (Output_Min + 100) ;
 		
-	}
-	
-	//其他没有中位值的通道，正常计算 
-	else
-	{
+	} else {
+		//Other channels without median values, normal calculation
 		
-		if(Channel == THROTTLE)
-		{
-		  	//判断标定极值值范围，防止除数等于零的情况
+		if(Channel == THROTTLE) {
+		  	//Determine the range of calibration extreme values to prevent the divisor from being equal to zero
 	  		if(Sampling_MaxMinData[Channel][MAXDAT] < MAXValue_Min)         Sampling_MaxMinData[Channel][MAXDAT] = MAXValue_Min ; 
 			if(Sampling_MaxMinData[Channel][MINDAT] > MINValue_Max)         Sampling_MaxMinData[Channel][MINDAT] = MINValue_Max ;
-			//限定采样AD有效范围(标定最小值 - 标定最大值)
+			//Limit sampling AD effective range (calibration minimum - calibration maximum)
 			if(Sampling_Data[Channel] > Sampling_MaxMinData[Channel][MAXDAT])       ADTemp = Sampling_MaxMinData[Channel][MAXDAT] ; 
 			else if(Sampling_Data[Channel] < Sampling_MaxMinData[Channel][MINDAT])  ADTemp = Sampling_MaxMinData[Channel][MINDAT] ;
 			else								        ADTemp = Sampling_Data[Channel] ; 
 		  	OutputTemp = (uint16_t)((ADTemp- Sampling_MaxMinData[Channel][MINDAT]) * ((float)(THR_Output_Max - THR_Output_Min)/(Sampling_MaxMinData[Channel][MAXDAT] - Sampling_MaxMinData[Channel][MINDAT]))+ 0.5f) + THR_Output_Min ;
-			//加上偏置值
+			//Plus offset value
 			if(Sampling_Offset[Channel] > 100)   Sampling_Offset[Channel] = 100 ;
 			OutputTemp += Sampling_Offset[Channel] * 2 ; 
 			if(OutputTemp > 100) OutputTemp -= 100 ;
 			else OutputTemp = 0 ; 
 			
-			//油门限幅
+			//Throttle limiting
 			if(OutputTemp > THR_Output_Max) OutputTemp = THR_Output_Max ; 
 			if(OutputTemp < THR_Output_Min) OutputTemp = THR_Output_Min ;
-		}
-		else
-		{
+		} else {
 			OutputTemp = (uint16_t)(Sampling_Data[Channel] * ((float)(Output_Max - Output_Min)/(Input_Max - Input_Min))+ 0.5f) + Output_Min ;
 		}
 	}
 	
-	//是否需要反向
-	if((Channel < 6) && (ChannelInversion_flg & (1<<Channel)))
-	{
+	//Need to reverse
+	if((Channel < 6) && (ChannelInversion_flg & (1<<Channel))) {
 		 OutputTemp = 2*Output_Mid - OutputTemp;
 	}
 	//======================================================================
-	//	         防止数据超过最大值
+	//	         Prevent data from exceeding the maximum
 	//======================================================================
-	if(OutputTemp > Output_Max) OutputTemp = Output_Max ; 
-	if(OutputTemp < Output_Min) OutputTemp = Output_Min ; 
+	if(OutputTemp > Output_Max)
+		OutputTemp = Output_Max ; 
+	if(OutputTemp < Output_Min)
+		OutputTemp = Output_Min ; 
 	
 	return OutputTemp ; 
 }

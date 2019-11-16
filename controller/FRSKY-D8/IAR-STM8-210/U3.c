@@ -1,5 +1,6 @@
 /*
-2017-8-16 : 取消 USART3 DMA发送完成中断。现在改为每次发送一包数据后停止，下次发送前先关闭再打开(因为会和 TIM2 无线发送中断相互冲突，影响无线发送时基)
+2017-8-16 : Cancel the USART3 DMA send completion interrupt. Now it is changed to stop after sending a packet of data each time, and then turn it off and then on 
+			before the next transmission (because it will conflict with the TIM2 wireless transmission interrupt, affecting the wireless transmission time base)
 */
 #include "include.h"
 
@@ -7,78 +8,87 @@
 #define  Fosc  12000000
 
 #define  U3_DR_Address                    (USART3_BASE + 0x01)
+#define  U3_Test_Buffer_Size       8
 #define  U3_Buffer_Size 		   103
 
-bool DMA1_U3_Tx_Flag = false ; 		  //DMA发送标志位
+#define BIT(n) (1 << n)
+
+#define U3_Recv_Buffer_Size 8
+
+static uint16_t U3_DMA_RXBuff[U3_Recv_Buffer_Size / 2] = { 1500, 1500, 1000, 1500 };
+
+static uint16_t DMA_Test[U3_Test_Buffer_Size / 2] = { 1500, 1500, 1000, 1500 };
+
+bool DMA1_U3_Tx_Flag = false ; 		  //DMA send flag
 
 static uint8_t U3_DMA_TXBuff[U3_Buffer_Size] = 
 {
-  	//起始头(7Byte  数据固定)
+  	//(7Byte  ??????) Starting Head
 	0x4C , 0x44 , 0x41 , 0x54 , 0x58 , 0x31 , 0x30 , 
-	//遥控器类型(1Byte  0x45 / 0x44)
+	//(1Byte  0x45 / 0x44) Device Type
 	0x45 , 
-	//遥控器软件版本号(3Byte  年 - 月 - 日)
+	//(3Byte  ?? - ?? - ??) Remote control software version number
 	0x00 , 0x00 , 0x00 , 
-	//无线协议版本号(1Byte)
+	//(1Byte)  Wireless protocol version number
 	0x00 ,
-	//美国手/日本手模式选择
+	//American hand / Japanese hand mode selection
 	0x00 ,
-	//遥控器唯一ID号(4Byte)
+	// remote control unique ID number(4Byte)
 	0x00 , 0x00 , 0x00 , 0x00 , 
-	//16通道数据(每通道2Byte = 16*2Byte = 32Byte)
+	//16 channel data(????2Byte = 16*2Byte = 32Byte)
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 ,
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 ,
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 ,
-	//通道反向标志位(1Byte)
+	//Channel reverse flag(1Byte)
 	0x00 , 
-	//所有按键 + 8位拨码开关GPIO值(2Byte)
+	//All buttons + 8-bit DIP switch GPIO value(2Byte)
 	0x00 , 0x00 , 0x00 , 
-	//电池电压值(2Byte  电池电压放大100倍)
+	//Battery voltage value(2Byte)
 	0x00 , 0x00 , 
-	//参考电431 + 高频模块 + 中位校准是否成功  标志位(1Byte)
+	//Reference 431 + High Frequency Module + Whether the median calibration is successful(1Byte)
 	0x00 , 
-	//所有通道AD采样原始值(每通道2Byte = 6*2Byte = 12Byte)
+	//Raw values ??of all channel AD samples(????2Byte = 6*2Byte = 12Byte)
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 
-	//LED状态(1Byte)  1代表点亮  0代表熄灭
+	//LED??(1Byte)  1????????  0???????
 	0x00 , 
-	//报警状态(1Byte)
+	//Alarm status(1Byte)
 	0x00 , 
-	//定时器死机次数(1Byte)
+	//Timer crash time(1Byte)
 	0x00 , 
-	//四摇杆偏置值(4Byte)
+	//Four rocker offset value(4Byte)
 	0x00 , 0x00 , 0x00 , 0x00 , 
 	
-	//四摇杆最大AD值(4*2Byte = 8Byte)
+	//Four rocker maximum AD value(4*2Byte = 8Byte)
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 
 	
-	//四摇杆中位AD值(4*2Byte = 8Byte)
+	//Four rocker median AD value(4*2Byte = 8Byte)
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 
 	
-	//四摇杆最小AD值(4*2Byte = 8Byte)
+	//Minimum rocker AD value(4*2Byte = 8Byte)
 	0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 0x00 , 
 	
-	//数据包校验和(2Byte)
+	//Packet checksum(2Byte)
 	0x00 , 0x00 , 
 }; 
 
 
 void U3_Init(void)
 {
-  	CLK -> PCKENR3 |= (1<<4) ; 						//打开 usart3 时钟 
+  	CLK -> PCKENR3 |= (1<<4) ; 						// Usart3 Clock
 	
 	//初始化 DMA1_CH1 (Usart3_TX DMA)
 	DMA_DeInit(DMA1_Channel1);
-	DMA_Init( DMA1_Channel1 , (uint32_t)U3_DMA_TXBuff,			//DMA内存地址
-                                  U3_DR_Address,				//DMA ADC外设地址
+	DMA_Init( DMA1_Channel1 , (uint32_t) U3_DMA_TXBuff,			//DMA memory address
+                                  U3_DR_Address,				//DMA ADC peripheral address
 				  U3_Buffer_Size,				//传输数据个数 : 103
 				  DMA_DIR_MemoryToPeripheral,			//传输方向 : 内存 -> 外设
 				  DMA_Mode_Normal,				//DMA模式 : 单次传输
                                   DMA_MemoryIncMode_Inc,			//内存地址累加
 				  DMA_Priority_High,				//DMA优先级 : 高
-				  DMA_MemoryDataSize_Byte );			//传输数据尺寸 : 8 bit
-	DMA_Cmd(DMA1_Channel1,DISABLE);						//先关闭DMA(需要时再打开)
+				  DMA_MemoryDataSize_Byte );			//Transfer data size : 8 bit
+	DMA_Cmd(DMA1_Channel1,DISABLE);						// Turn off DMA first (open it when needed)
 	DMA_GlobalCmd(ENABLE);
 	
 	//Usart3初始化
@@ -86,49 +96,75 @@ void U3_Init(void)
 	
 	USART3 -> BRR2  =  BRR_Counts & 0x000F ; 
        	USART3 -> BRR2 |= ((BRR_Counts & 0xf000) >> 8);
-    	USART3 -> BRR1  = ((BRR_Counts & 0x0ff0) >> 4);     			/*先给BRR2赋值 最后再设置BRR1*/  
-	USART3 -> CR2   = (1<<3) ; 						//发送使能
-	USART3 -> CR3   = 0 ; 
-	USART3 -> CR1 &= ~(1<<5);						//使能串口
-	
-	DMA1_U3_Tx_Flag = false ; 
+    	USART3 -> BRR1  = ((BRR_Counts & 0x0ff0) >> 4); /* First assign BRR2 and finally set BRR1 */  
+	USART3 -> CR2 = (BIT(2) | BIT(3)); 					// Send enable
+	USART3 -> CR3 = 0 ; 
+	USART3 -> CR1 &= ~(1<<5);							// Enable serial port
+
+	DMA_DeInit(DMA1_Channel2);
+	DMA_Init( DMA1_Channel2 , (uint32_t)U3_DMA_RXBuff,
+                  U3_DR_Address,
+				  U3_Recv_Buffer_Size,
+				  DMA_DIR_PeripheralToMemory,
+				  DMA_Mode_Circular,
+                  DMA_MemoryIncMode_Inc,
+				  DMA_Priority_High,
+				  DMA_MemoryDataSize_Byte );
+		
+	USART_DMACmd(USART3, USART_DMAReq_RX, ENABLE);
+	DMA_Cmd(DMA1_Channel2 ,ENABLE);
+	DMA_GlobalCmd(ENABLE); 
 }
 
 
 //==============================================================================
-//发送串口数据包
+//Send serial port packet
 //==============================================================================
 void U3_DMATX_ONOFF(void)
 {
-  	//发送完成标志位
+  	// Send completion flag
   	if (DMA1_Channel1 -> CSPR & (1<<1))
 	{
-		DMA1_Channel1 -> CSPR &= ~(1<<1) ; 	//清除中断标记
-		USART3 -> CR5   &= ~(1<<7) ; 		//非常重要 关闭UART1 DMA发送请求
-		DMA1_Channel1->CCR &= ~(1<<0);		//关闭DMA
-		DMA1_U3_Tx_Flag = false ; 		//置位标志位
+		DMA1_Channel1 -> CSPR &= ~(1<<1) ; 	// Clear interrupt flag
+		USART3 -> CR5   &= ~(1<<7) ; 		// Turn off DMA UART1 send request
+		DMA1_Channel1->CCR &= ~(1<<0);		// Turn off DMA
+		DMA1_U3_Tx_Flag = false ; 		// Set flag
 	}
   
-  	//发送完成后，才会开始发送
-    	if (DMA1_U3_Tx_Flag == false)
+  	//Sending will not start until the send is complete
+	if (DMA1_U3_Tx_Flag == false)
 	{
 		//设置发送个数
 		DMA1_Channel1 -> CNBTR = U3_Buffer_Size;
 		
 		//启动UART3 DMA发送！
-		USART3 -> CR5   = (1<<7) ; 					//使能 USART3 DMA TX
+		USART3 -> CR5   |= (1<<7) ; 					// USART3 DMA TX Enable
 		DMA1_Channel1 -> CCR |= (1<<0) ;
 		
 		DMA1_U3_Tx_Flag = true;
 	}
 }
 
+
+static uint8_t done = 0;
+
 //==============================================================================
-//因为数据包太大，为了不影响其他程序的响应速度，将一包发送数据拆成5次载入。
-//载入完所有数据后，再使能发送。
+//Because the data packet is too large, in order not to affect the response speed of other programs, a packet of sent data is split into 5 loads.
+// After loading all the data, enable it again.
 //==============================================================================
 void BuildUsart3Data(void)
 {
+	// if(U3_DMA_RXBuff[0] != done) {
+	// 	done = U3_DMA_RXBuff[0];
+	// 	DMA_Test[0] = done;
+	// 	U3_DMATX_ONOFF();
+	// }
+
+	FRSKYD8_SendDataBuff[RUDDER]   = U3_DMA_RXBuff[RUDDER];
+	FRSKYD8_SendDataBuff[THROTTLE] = U3_DMA_RXBuff[THROTTLE];
+	FRSKYD8_SendDataBuff[ELEVATOR] = U3_DMA_RXBuff[ELEVATOR];  
+	FRSKYD8_SendDataBuff[AILERON]  = U3_DMA_RXBuff[AILERON]; 
+
 	static uint8_t Phase = 0 ; 
 	uint8_t i = 0 ; 
 	uint16_t DataTemp = 0 ; 
@@ -222,9 +258,9 @@ void BuildUsart3Data(void)
 		U3_DMA_TXBuff[70] = LED_Status_SendDat ; 
 		//报警状态
 		U3_DMA_TXBuff[71] = RunStatus ; 
-		//定时器死机次数
+		//Tiempo de bloqueo del temporizador
 		U3_DMA_TXBuff[72] = TIM2_ErrorCnt ; 
-		//四摇杆偏置值 + 4摇杆极值(最大、中位、最小AD值)
+		// 4 valores de desplazamiento del eje de balancín + 4 valores extremos del joystick (valor AD máximo, medio, mínimo)
 		for(i = 0 ; i < 4 ; i++)
 		{
 			U3_DMA_TXBuff[73+i] = Sampling_Offset[i];
@@ -244,7 +280,7 @@ void BuildUsart3Data(void)
 	}
 	else if(Phase == 9)
 	{
-	  	//所有数累加和
+	  	//Se suman todos los números
 	  	DataTemp = 0 ; 
 		for(i = 0 ; i < (U3_Buffer_Size - 2) ; i++)
 		{
@@ -254,7 +290,5 @@ void BuildUsart3Data(void)
 		U3_DMA_TXBuff[102] = DataTemp & 0xFF;
 	}
 	
-	if(++Phase > 10) { Phase = 0 ; U3_DMATX_ONOFF() ;} //开始发送
+	if(++Phase > 10) { Phase = 0 ; /* U3_DMATX_ONOFF(); */ } //开始发送  
 }
-
-
