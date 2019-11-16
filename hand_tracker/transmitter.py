@@ -20,7 +20,7 @@ class Transmitter():
 
 
     def scale(self, value):
-       return 1000 + (value * 1000)
+       return int(1000 + (value * 1000))
 
 
     def send_axis_values(self, pitch, roll, yaw, throttle):
