@@ -15,6 +15,8 @@ def main():
         motion_capturer = MotionCapturerLeapMotion()
     elif sys.argv[1] == 'mouse':
         motion_capturer = MotionCapturerMouse()
+    elif sys.argv[1] == 'mix':
+        motion_capturer = MotionCapturerLeapAndMouse()
 
     transmitter = Transmitter(sys.argv[2])
 
