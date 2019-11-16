@@ -20,8 +20,8 @@ class MotionCapturerLeapMotion(MotionCapturer):
         hand = frame.hands[0]
         pitch = 1 - self.normalize(hand.direction.pitch)
         roll = 1 - self.normalize(hand.palm_normal.roll)
-        yaw = self.normalize(hand.direction.yaw)
-        throttle = min(1, hand.position[1] / 300)
+        yaw = (self.normalize(hand.direction.yaw) - 0.5) * 0.1 + 0.5
+        throttle = min(1, hand.palm_position[1] / 300)
         print(pitch, roll, yaw, throttle)
         return pitch, roll, yaw, throttle
 

@@ -9,7 +9,7 @@ import serial,struct
 class Transmitter():
 
     def __init__(self, channel, baudrate=115200):
-        
+
         try:
             self.serial = serial.Serial()
             self.serial.port = channel
@@ -24,7 +24,7 @@ class Transmitter():
 
 
     def send_axis_values(self, pitch, roll, yaw, throttle):
-        data_payload = struct.pack('>4H', self.scale(pitch), self.scale(roll), self.scale(throttle), self.scale(yaw))
+        data_payload = struct.pack('>4H', self.scale(roll), self.scale(pitch), self.scale(throttle), self.scale(yaw))
         try:
             self.serial.write(data_payload)
         except Exception:
