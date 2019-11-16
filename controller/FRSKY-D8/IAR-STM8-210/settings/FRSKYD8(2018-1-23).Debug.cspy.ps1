@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.general.xcl" --backend -f "\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.general.xcl" --backend -f "C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.general.xcl" --debug_file=$debugfile --backend -f "\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\settings\FRSKYD8(2018-1-23).Debug.driver.xcl" 
 }

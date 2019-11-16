@@ -80,6 +80,5 @@
     </Aliases>
     <DebuggerSettings>
         <DisableInterruptsWhenStepping>0</DisableInterruptsWhenStepping>
-        <LeaveTargetRunning>0</LeaveTargetRunning>
     </DebuggerSettings>
 </settings>

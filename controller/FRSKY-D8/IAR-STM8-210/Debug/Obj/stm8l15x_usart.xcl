@@ -1,34 +1,34 @@
-"\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\src\stm8l15x_usart.c"
+"C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\src\stm8l15x_usart.c"
 -std=c99
 -ferror-limit=0
 -fbracket-depth=512
 -MD
 -MF
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\Debug\Obj\stm8l15x_usart.pbi.dep
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\Debug\Obj\stm8l15x_usart.pbi.dep
 -o
 stm8l15x_usart.pbi
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\src
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\src
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\Menu
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\Menu
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\RF
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\RF
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\stm8\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\stm8\inc\c
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\LIB\STM8L15x_StdPeriph_Driver\inc
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\Menu
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\Menu
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210\RF
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210\RF
 -I
-\\vmware-host\Shared Folders\Documents\programming\C++\HanDrone\controller_tx02\FRSKY-D8\IAR-STM8-210
+C:\Users\David\Downloads\TINY-TX-X8-master\FRSKY-D8\IAR-STM8-210
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
