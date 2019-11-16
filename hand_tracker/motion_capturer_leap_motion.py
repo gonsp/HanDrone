@@ -12,7 +12,7 @@ class MotionCapturerLeapMotion(MotionCapturer):
         frame = self.controller.frame()
         if len(frame.hands) == 0:
             print("No hand detected")
-            return 0, 0, 0, 0
+            return 0.5, 0.5, 0.5, 0
         elif len(frame.hands) > 1:
             print("More than one hand detected")
             raise ValueError
@@ -21,9 +21,9 @@ class MotionCapturerLeapMotion(MotionCapturer):
         pitch = 1 - self.normalize(hand.direction.pitch)
         roll = 1 - self.normalize(hand.palm_normal.roll)
         yaw = self.normalize(hand.direction.yaw)
-        print(pitch, roll, yaw)
-
-        return 0, 0, 0, 0
+        throttle = min(1, hand.position[1] / 300)
+        print(pitch, roll, yaw, throttle)
+        return pitch, roll, yaw, throttle
 
 
     def normalize(self, radians):
