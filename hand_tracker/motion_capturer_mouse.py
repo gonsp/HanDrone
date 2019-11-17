@@ -21,15 +21,15 @@ class MotionCapturerMouse(MotionCapturer):
         self.captureThread = None
         self.noShutdown = True
         self.captureMouse()
-        
+
     def captureMouse(self):
         logidevmon.list_devices()
         for device in logidevmon.LOGITECH_DEVICES:
             print (f"{device['unitId']} {device['type']} : {device['name']}")
-                
+
             if (device["type"] == "mouse"):
                 self.mouseId = device['unitId']
-        
+
         logidevmon.set_thumbWheel_config(self.mouseId,False,False,False)
         logidevmon.set_wheel_config(self.mouseId,False,False,False)
         logidevmon.set_thumbWheel_config(self.mouseId, False, False, False)

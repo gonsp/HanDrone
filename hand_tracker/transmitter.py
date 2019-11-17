@@ -24,6 +24,7 @@ class Transmitter():
 
 
     def send_axis_values(self, pitch, roll, yaw, throttle):
+        print((self.scale(roll), self.scale(pitch), self.scale(throttle), self.scale(yaw)))
         data_payload = struct.pack('>4H', self.scale(roll), self.scale(pitch), self.scale(throttle), self.scale(yaw))
         try:
             self.serial.write(data_payload)

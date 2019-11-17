@@ -22,7 +22,7 @@ class MotionCapturerLeapMotion(MotionCapturer):
         roll = 1 - self.normalize(hand.palm_normal.roll)
         yaw = self.filter_yaw(self.normalize(hand.direction.yaw))
         throttle = min(1, hand.palm_position[1] / 300)
-        print(pitch, roll, yaw, throttle)
+        # print(pitch, roll, yaw, throttle)
         return pitch, roll, yaw, throttle
 
 
