@@ -6,6 +6,7 @@ lib_dir = os.path.abspath(os.path.join(src_dir, './lib'))
 sys.path.insert(0, lib_dir)
 
 from motion_capturer_leap_motion import MotionCapturerLeapMotion
+from motion_capturer_leap_and_mouse import MotionCapturerLeapAndMouse
 from motion_capturer_mouse import MotionCapturerMouse
 from transmitter import Transmitter
 
@@ -26,6 +27,8 @@ def main():
             transmitter.send_axis_values(pitch, roll, yaw, throttle)
         except ValueError:
             print('Ignoring frame')
+        except KeyboardInterrupt:
+            motion_capturer.shutdown()
 
 
 if __name__ == '__main__':

@@ -16,6 +16,7 @@ class MotionCapturerMouse(MotionCapturer):
         self.currentThrottle = 0
         self.currentX = 50
         self.currentY = 50
+        self.currentJaw = 50
         self.mouseId = 0
         self.captureThread = None
         self.noShutdown = True
@@ -31,30 +32,37 @@ class MotionCapturerMouse(MotionCapturer):
         
         logidevmon.set_thumbWheel_config(self.mouseId,False,False,False)
         logidevmon.set_wheel_config(self.mouseId,False,False,False)
+        logidevmon.set_thumbWheel_config(self.mouseId, False, False, False)
 
-        logidevmon.set_thumbWheel_config(self.mouseId,False,False,False)
-        logidevmon.set_wheel_config(self.mouseId,False,False,False)
-
-        if (len(logidevmon.LOGITECH_DEVICES)>0 and self.mouseId != 0):    
-            logidevmon.set_wheel_config(self.mouseId,True,True,True)    
+        if (len(logidevmon.LOGITECH_DEVICES)>0 and self.mouseId != 0):
+            logidevmon.set_wheel_config(self.mouseId,True,True,True)
+            logidevmon.set_thumbWheel_config(self.mouseId, True, True, True)
             logidevmon.set_immediate_pointer_redirection_config(self.mouseId, True, True, True)
 
             self.captureThread = Thread(target=run_loop, args=(self, ))
             self.captureThread.start()
 
     def get_axis_values(self):
-        res = (float(self.currentY) / 100, float(self.currentX) / 100, 0.5, float(self.currentThrottle) / 100)
+        res = (float(self.currentY) / 100, float(self.currentX) / 100, float(self.currentJaw) / 100, float(self.currentThrottle) / 100)
+
+        # Slow down rotations
         distance_to_middle = 50 - self.currentY
         step = float(distance_to_middle) / 50
         self.currentY = self.currentY + step
         distance_to_middle = 50 - self.currentX
         step = float(distance_to_middle) / 50
         self.currentX = self.currentX + step
+
+        distance_to_middle = 50 - self.currentJaw
+        step = float(distance_to_middle) / 50
+        self.currentJaw = self.currentJaw + step
+
         return res
 
     def shutdown(self):
         logidevmon.set_immediate_pointer_redirection_config(self.mouseId, False, False, False)
         logidevmon.set_wheel_config(self.mouseId,False,False,False)
+        logidevmon.set_thumbWheel_config(self.mouseId, False, False, False)
         self.noShutdown = False
 
     def normalize(self, n):
@@ -79,18 +87,23 @@ class MotionCapturerMouse(MotionCapturer):
             return 3 * mult
         else:
             return -3 * mult
-    
 
     def processXYRaw(self, event):
         self.currentX = self.normalize(self.currentX + self.interpretMouse(event["value"]["dx"], -1))
         self.currentY = self.normalize(self.currentY + self.interpretMouse(event["value"]["dy"], 1))
 
+    def processJaw(self, event):
+        delta = int(event["value"]["rotation"])
+        delta = delta * 15
+        self.currentJaw = self.normalize(self.currentJaw + delta)
+
     def processEvents(self, message):
         res = json.loads(message)
-        print(res)
 
         if (res["path"] == "wheel"):
             self.processWheel(res)
+        elif(res["path"] == "thumbWheel"):
+            self.processJaw(res)
         elif (res["path"] == "divertedRawXY"):
             self.processXYRaw(res)
 

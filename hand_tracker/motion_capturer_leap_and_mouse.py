@@ -5,9 +5,8 @@ from motion_capturer_mouse import MotionCapturerMouse
 class MotionCapturerLeapAndMouse(MotionCapturer):
 
     def __init__(self):
-        self.leap_motion = MotionCapturerLeapMotion
-        self.mouse = MotionCapturerMouse
-
+        self.leap_motion = MotionCapturerLeapMotion()
+        self.mouse = MotionCapturerMouse()
 
     def get_axis_values(self):
         pitch, roll, _, throttle = self.leap_motion.get_axis_values()
